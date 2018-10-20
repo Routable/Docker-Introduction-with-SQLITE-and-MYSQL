@@ -1,0 +1,59 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Docker Example</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+  <body background="http://blog.docker.io/wp-content/uploads/2013/06/Docker-logo-011.png" style="background-repeat:no-repeat; background-size:cover;">
+  
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="jumbotron">
+    <h1 style="padding-left:20%">Docker Demo</h1> 
+    <p style="padding-left:20%">An example of a Docker Swarm utilizing the resources available at Digital Ocean, and utilization of the Flask framework with both SQLite, and MySQL.</p> 
+  </div>
+
+  <div class="panel panel-primary" style="width:60%;margin-left:20%;margin-top:3%;">
+      <div class="panel-heading"><h2>How many times has this Docker image been viewed?</div>
+      <div class="panel-body"><h1>{{ sqlite_count }}</h1></div>
+  </div>
+  
+  <div class="panel panel-danger" style="width:60%;margin-left:20%;">
+      <div class="panel-heading"><h2>How many TOTAL views (shared database) have we seen?</h2></div>
+      <div class="panel-body"><h1>{{ mysql_count }}</h1></div>
+  </div>
+
+    <div class="panel panel-danger" style="width:60%;margin-left:20%;">
+      <div class="panel-heading"><h2>How does it work?</h2></div>
+      <div class="panel-body">
+        
+        <h4>Each docker container (AKA node) installs SQLITE as a requirement, as per the Requirements file used by Docker. The docker image of the application we have created already contains a single database file 
+        that SQLITE is able to read and update. As each node "pulls" the application, the files are effectively cloned on two separate containers. When you refresh this page, the "How many times has this Docker image been viewed?" number
+        will change because our swarm is load-balancing/alternating which docker container you are shown as a client!</h4>
+
+        <h4>As you can tell, each docker image has a different value found in its own personal database, as it depends entirely on what node is load-balanced to whom, and when it occurs. For this reason, it is pretty rate that both would have the exact same value.
+          But what about the total views? We can see that number has incremented consistently no matter how many times we refreshed. This happens because we are running TWO databases - SQLITE and MySQL. 
+        </h4>
+
+        <h4>SQLITE (as awesome as it is) unfortunately does not support network connections natively, so a different server platform had to be used. PostgresSQL is another popular database platform, but most people in the classroom should be familiar with MySQL, thus why we selected it.
+          Each docker container contains a method that has the connection details to this centralized MySQL database. As all of the nodes have access to this centralized data location, we will always have consistent data no matter what node the client is forwarded to. </h4>
+      
+      </div>
+    </div>
+
+</body>
+</html>
