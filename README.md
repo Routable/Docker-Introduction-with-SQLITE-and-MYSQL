@@ -84,8 +84,11 @@ INSERT INTO examplecount(id) VALUES (1);
   8) Verify that your connection settings are correct in your application. In my example, I am using the Flask-MySql Python extension to connect to my database. Inside my app.py, I have the following settings that are used for my connection:
 
   app.config['MYSQL_DATABASE_USER'] = 'root'
+
   app.config['MYSQL-DATABASE_PASSWORD'] = 'password'
+  
   app.config['MYSQL_DATABASE_DB'] = 'middleware'
+  
   app.config['MYSQL_DATABASE_HOST'] = 'ip of mysql server'
 
 9)  Install the Flask-MySQL dependency on the server your application will be making the connection from. Alternatively, add the flask-mysqldb to your Docker requirements file.  
