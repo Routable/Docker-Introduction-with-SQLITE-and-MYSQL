@@ -9,41 +9,54 @@ This application was used in combination with dockerhub as a way to research usi
 #### Note: This tutorial assumes that you have already created a Digital Ocean server using the one-click install option for the Docker image. If you have not completed this step, please follow the guide available at: 
 https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-docker-application
 
+1) After provisioning yourself a server via the 1 click install (as per the guide above) run the following commands:
 
-1) wget https://github.com/docker/machine/releases/download/v0.15.0/docker-machine-$(uname -s)-$(uname -m)
-2) mv docker-machine-Linux-x86_64 docker-machine
-3) chmod +x docker-machine 
-4) sudo mv docker-machine /usr/local/bin
-5) docker-machine create --driver digitalocean --digitalocean-access-token YOURTOKENAPIKEY machinename
-6) (Repeat to create as many nodes as you want)
-7) docker swarm init --advertise-addr ip_address_of_host
-8) (copy the string outputted from step 7)
-9) Docker-machine ssh slave1  (Paste the string from step 7 on each node. Repeat as necessary.)
+		1a) wget https://github.com/docker/machine/releases/download/v0.15.0/docker-machine-$(uname -s)-$(uname -m)
+		
+		1b) mv docker-machine-Linux-x86_64 docker-machine
+		1c) chmod +x docker-machine 
+		1d) sudo mv docker-machine /usr/local/bin
+		1e) docker-machine create --driver digitalocean --digitalocean-access-token YOURTOKENAPIKEY machinename
+		
+2) Repeat step 1e to create as many docker nodes (slaves) that you require.
+3) Initialize your host machine by running the following command:
 
-10) Run the following commands on every node and host:
+		3) docker swarm init --advertise-addr ip_address_of_host
+		
+4) After running the 'docker swarm init' command in the step above, copy the output provided to your terminal. 
+5) SSH into each node that you created and paste the string referenced in stpe 4 on each node. 
 
-  ufw allow 22/tcp
-  ufw allow 2376/tcp
-  ufw allow 2377/tcp
-  ufw allow 7946/tcp
-  ufw allow 7946/udp
-  ufw allow 4789/udp
-  ufw allow 5000/tcp
-  ufw allow 5000/udp
+		5) Docker-machine ssh name_of_node 
+
+6) Run the following commands on every node and host. Please note that steps 6g and 6h will only apply if your Docker application require port 5000 to operate. In our project, it is required.
+
+  		6a) ufw allow 22/tcp
+  		6b) ufw allow 2376/tcp
+  		6c) ufw allow 2377/tcp
+  		6d) ufw allow 7946/tcp
+  		6e) ufw allow 7946/udp
+  		6f) ufw allow 4789/udp
+  		6g) ufw allow 5000/tcp
+  		6h) ufw allow 5000/udp
   
 Note: Run the following commands individually, as copy pasting them tends to break them when inputted into the terminal.
  
-  ufw enable
-  ufw reload
-  systemctl restart docker
+  		6j) ufw enable
+  		6k) ufw reload
+  		6l) systemctl restart docker
 
-11) Navigate back to the Swarm Master/Host machine, and execute the following command:
-  docker pull stevenabucholtz/middleware
+7) Navigate back to the Swarm Master/Host machine. Ctrl+D to escape a docker-ssh session. Execute the following command:
 
-Note: Pull the image from dockerhub that you wish to run. In this example, I have already created my own docker image that we will be running. 
+  		docker pull stevenabucholtz/middleware
 
-12) On the Swarm Master/host machine, run the following command to initialize and deploy your application to the swarm:
-	docker service create -p 5000:5000 -replicas 3 stevenabucholtz/middleware 
+Note: Pull the image from dockerhub that you wish to run. In this example, I have already created my own docker image that we will be running. If you wish to run your own image, you're on your own, and this guide will no longer be of much help to you.
+
+8) On the Swarm Master/host machine, run the following command to initialize and deploy your application to the swarm:
+
+		docker service create -p 5000:5000 -replicas 3 stevenabucholtz/middleware 
+
+Note: The docker service command will map the necessary ports required to view the application. The replica portion of the command specifies how many nodes/slaves should redistribute your application. The stevenabucholtz/middleware portion simply dictates what Docker image should be run. 
+
 
 # Connect your Docker node to a MySQL database on Ubuntu 18.0.4
 
@@ -85,11 +98,8 @@ Note: Pull the image from dockerhub that you wish to run. In this example, I hav
   8) Verify that your connection settings are correct in your application. In my example, I am using the Flask-MySql Python extension to connect to my database. Inside my app.py, I have the following settings that are used for my connection:
 
   		app.config['MYSQL_DATABASE_USER'] = 'root'
-
   		app.config['MYSQL-DATABASE_PASSWORD'] = 'password'
-  
   		app.config['MYSQL_DATABASE_DB'] = 'middleware'
-  
   		app.config['MYSQL_DATABASE_HOST'] = 'ip of mysql server'
 
 9)  Install the Flask-MySQL dependency on the server your application will be making the connection from. Alternatively, add the flask-mysqldb to your Docker requirements file.  
