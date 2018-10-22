@@ -49,57 +49,60 @@ Note: Pull the image from dockerhub that you wish to run. In this example, I hav
 
 1) Install MYSQL on your server.
 
-  sudo apt update
-  sudo apt install mysql-server
-  sudo mysql_secure_installation
+  		sudo apt update
+	  	sudo apt install mysql-server
+  		sudo mysql_secure_installation
 
 2) Log into your MYSQL server from the terminal.
 
-  mysql -p YOURPASSWORD
+ 		 mysql -p YOURPASSWORD
 
 3) Grant privileges to your existing root account, or create a new MYSQL user and provide permissions to it with the following command:
 
-GRANT ALL PRIVILEGES ON *.* TO 'middleware'@'%'
-IDENTIFIED BY 'yourpassword';
+		GRANT ALL PRIVILEGES ON *.* TO 'middleware'@'%'
+		IDENTIFIED BY 'yourpassword';
 
 4) Create a database, and set it to be your primarily used database.
 
-CREATE DATABASE middleware;
-use middleware;
+		CREATE DATABASE middleware;
+		use middleware;
 
 5) Create the tables you require for your project. Feel free to do an insert after to make sure it's working. 
 
-CREATE TABLE examplecount(id int);
-INSERT INTO examplecount(id) VALUES (1);
+		CREATE TABLE examplecount(id int);
+		INSERT INTO examplecount(id) VALUES (1);
 
 6) Now that you have MySQL setup, you need to do a few specific server changed to allow outside connections to hit your database:
 
-  nano /etc/mysql/mysql.conf.d/mysqld.cnf
+  		nano /etc/mysql/mysql.conf.d/mysqld.cnf
   
-  In the file, make sure the line "set bind-address to" looks like "set bind-address to 0.0.0.0" instead of "set bind-address to 127.0.0.1".
+(In the file, make sure the line "set bind-address to" looks like "set bind-address to 0.0.0.0" instead of "set bind-address to 127.0.0.1".)
 
  7) Restart the MYSQL service.
-  systemctl restart mysql.service
+ 
+  		systemctl restart mysql.service
 
   8) Verify that your connection settings are correct in your application. In my example, I am using the Flask-MySql Python extension to connect to my database. Inside my app.py, I have the following settings that are used for my connection:
 
-  app.config['MYSQL_DATABASE_USER'] = 'root'
+  		app.config['MYSQL_DATABASE_USER'] = 'root'
 
-  app.config['MYSQL-DATABASE_PASSWORD'] = 'password'
+  		app.config['MYSQL-DATABASE_PASSWORD'] = 'password'
   
-  app.config['MYSQL_DATABASE_DB'] = 'middleware'
+  		app.config['MYSQL_DATABASE_DB'] = 'middleware'
   
-  app.config['MYSQL_DATABASE_HOST'] = 'ip of mysql server'
+  		app.config['MYSQL_DATABASE_HOST'] = 'ip of mysql server'
 
 9)  Install the Flask-MySQL dependency on the server your application will be making the connection from. Alternatively, add the flask-mysqldb to your Docker requirements file.  
 
-pip install flask-mysqldb
+		pip install flask-mysqldb
 
-10) If you did everything correctly, you should have access to your database from your application. Most problems are typically due to incorrect privilege levels being assigned to the MySQL user, or firewall settings preventing the connection. Depending on your system settings, you made need to add the default MySQL port (3306) to your firewall whitelist. It is recommended to only allow connections from machines you trust, as MySQL is a commonly attacked service.
+10) If you did everything correctly, you should have access to your database from your application. Most problems are typically due to incorrect privilege levels being assigned to the MySQL user, or firewall settings preventing the connection. 
 
-sudo ufw allow from your.ip.address/24 to any port 3306
-(potentially optional) ufw enable
-ufw reload
+Depending on your system settings, you made need to add the default MySQL port (3306) to your firewall whitelist. It is recommended to only allow connections from machines you trust, as MySQL is a commonly attacked service.
+
+		sudo ufw allow from your.ip.address/24 to any port 3306
+		(potentially optional) ufw enable
+		ufw reload
 
 Note: If you are unsure of what dependencies you require for your docker setup files, you can use the command 
 'pip freeze > requirements.txt' to list all active dependencies on your system. You can then add these dependencies to your docker file.
