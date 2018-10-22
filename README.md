@@ -98,7 +98,8 @@ sudo ufw allow from your.ip.address/24 to any port 3306
 (potentially optional) ufw enable
 ufw reload
 
-Note: If you are unsure of what dependencies you require for your docker setup files, you can use the command 'pip freeze > requirements.txt' to list all active dependencies on your system. You can then add these dependencies to your docker file.
+Note: If you are unsure of what dependencies you require for your docker setup files, you can use the command 
+'pip freeze > requirements.txt' to list all active dependencies on your system. You can then add these dependencies to your docker file.
 
 
 
