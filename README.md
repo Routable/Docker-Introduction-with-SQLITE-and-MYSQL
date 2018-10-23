@@ -53,7 +53,7 @@ Note: Pull the image from dockerhub that you wish to run. In this example, I hav
 
 8) On the Swarm Master/host machine, run the following command to initialize and deploy your application to the swarm:
 
-		docker service create -p 5000:5000 -replicas 3 stevenabucholtz/middleware 
+		docker service create -p 5000:5000 --replicas 3 stevenabucholtz/middleware 
 
 Note: The docker service command will map the necessary ports required to view the application. The replica portion of the command specifies how many nodes/slaves should redistribute your application. The stevenabucholtz/middleware portion simply dictates what Docker image should be run. 
 
